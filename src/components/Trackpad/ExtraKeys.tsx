@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 interface ExtraKeysProps {
 	sendKey: (key: string) => void;
+	onInputFocus?: () => void;
 }
 
 /** All extra keys in one row (must match KeyMap.ts). Play/Pause is a single toggle. */
@@ -41,7 +42,7 @@ const EXTRA_KEYS: { label: string; key: string }[] = [
 	{ label: "Next", key: "audionext" },
 ];
 
-export const ExtraKeys: React.FC<ExtraKeysProps> = ({ sendKey }) => {
+export const ExtraKeys: React.FC<ExtraKeysProps> = ({ sendKey, onInputFocus: _onInputFocus }) => {
 	const [isPlaying, setIsPlaying] = useState(false);
 
 	const handleInteract = (e: React.PointerEvent, key: string) => {
