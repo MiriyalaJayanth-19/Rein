@@ -11,7 +11,7 @@ function SettingsPage() {
     const [ip, setIp] = useState('');
     const [frontendPort, setFrontendPort] = useState(String(CONFIG.FRONTEND_PORT));
     const [invertScroll, setInvertScroll] = useState(CONFIG.MOUSE_INVERT);
-    const [sensitivity, setSensitivity] = useState(CONFIG.MOUSE_SENSITIVITY); // [!code ++]
+    const [sensitivity, setSensitivity] = useState(CONFIG.MOUSE_SENSITIVITY);
     const [qrData, setQrData] = useState('');
 
     // Load initial state
