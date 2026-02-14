@@ -5,7 +5,7 @@ export interface InputMessage {
     type: 'move' | 'click' | 'scroll' | 'key' | 'text' | 'zoom' | 'combo';
     dx?: number;
     dy?: number;
-    button?: 'left' | 'right'' | 'middle';
+    button?: 'left' | 'right' | 'middle';
     press?: boolean;
     key?: string;
     keys?: string[];
@@ -81,17 +81,21 @@ export class InputHandler {
             case 'move':
                 if (msg.dx !== undefined && msg.dy !== undefined) {
                     const currentPos = await mouse.getPosition();
-                    
-                    await mouse.setPosition(new Point(
-                        currentPos.x + msg.dx, 
-                        currentPos.y + msg.dy
-                    ));
+                    await mouse.setPosition(
+                        new Point(currentPos.x + msg.dx, currentPos.y + msg.dy)
+                    );
                 }
                 break;
 
             case 'click':
                 if (msg.button) {
-                    const btn = msg.button === 'left' ? Button.LEFT : msg.button === 'right' ? Button.RIGHT : Button.MIDDLE;
+                    const btn =
+                        msg.button === 'left'
+                            ? Button.LEFT
+                            : msg.button === 'right'
+                            ? Button.RIGHT
+                            : Button.MIDDLE;
+
                     if (msg.press) {
                         await mouse.pressButton(btn);
                     } else {
@@ -128,15 +132,18 @@ export class InputHandler {
 
             case 'zoom':
                 if (msg.delta !== undefined && msg.delta !== 0) {
-                    const sensitivityFactor = 0.5; 
+                    const sensitivityFactor = 0.5;
                     const MAX_ZOOM_STEP = 5;
 
                     const scaledDelta =
                         Math.sign(msg.delta) *
-                        Math.min(Math.abs(msg.delta) * sensitivityFactor, MAX_ZOOM_STEP);
+                        Math.min(
+                            Math.abs(msg.delta) * sensitivityFactor,
+                            MAX_ZOOM_STEP
+                        );
 
                     const amount = -scaledDelta;
-                    
+
                     await keyboard.pressKey(Key.LeftControl);
                     try {
                         await mouse.scrollDown(amount);
@@ -150,6 +157,7 @@ export class InputHandler {
                 if (msg.key) {
                     console.log(`Processing key: ${msg.key}`);
                     const nutKey = KEY_MAP[msg.key.toLowerCase()];
+
                     if (nutKey !== undefined) {
                         await keyboard.type(nutKey);
                     } else if (msg.key.length === 1) {
@@ -163,9 +171,11 @@ export class InputHandler {
             case 'combo':
                 if (msg.keys && msg.keys.length > 0) {
                     const nutKeys: (Key | string)[] = [];
+
                     for (const k of msg.keys) {
                         const lowerKey = k.toLowerCase();
                         const nutKey = KEY_MAP[lowerKey];
+
                         if (nutKey !== undefined) {
                             nutKeys.push(nutKey);
                         } else if (lowerKey.length === 1) {
@@ -185,7 +195,7 @@ export class InputHandler {
 
                     try {
                         for (const k of nutKeys) {
-                            if (typeof k === "string") {
+                            if (typeof k === 'string') {
                                 await keyboard.type(k);
                             } else {
                                 await keyboard.pressKey(k);
@@ -193,7 +203,9 @@ export class InputHandler {
                             }
                         }
 
-                        await new Promise(resolve => setTimeout(resolve, 10));
+                        await new Promise(resolve =>
+                            setTimeout(resolve, 10)
+                        );
                     } finally {
                         for (const k of pressedKeys.reverse()) {
                             await keyboard.releaseKey(k);
