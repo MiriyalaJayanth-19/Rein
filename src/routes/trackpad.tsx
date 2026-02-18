@@ -19,14 +19,14 @@ function TrackpadPage() {
     const bufferText = buffer.join(" + ");
     const hiddenInputRef = useRef<HTMLInputElement>(null);
     const isComposingRef = useRef(false);
-    
+
     // Load Client Settings
     const [sensitivity] = useState(() => {
         if (typeof window === 'undefined') return 1.0;
         const s = localStorage.getItem('rein_sensitivity');
         return s ? parseFloat(s) : 1.0;
     });
-    
+
     const [invertScroll] = useState(() => {
         if (typeof window === 'undefined') return false;
         const s = localStorage.getItem('rein_invert');
@@ -49,7 +49,7 @@ function TrackpadPage() {
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         const key = e.key.toLowerCase();
-        
+
         if (modifier !== "Release") {
             if (key === 'backspace') {
                 e.preventDefault();
@@ -76,7 +76,7 @@ function TrackpadPage() {
     };
 
     const handleModifierState = () => {
-        switch(modifier){
+        switch (modifier) {
             case "Active":
                 if (buffer.length > 0) {
                     setModifier("Hold");
@@ -97,7 +97,7 @@ function TrackpadPage() {
 
     const handleModifier = (key: string) => {
         console.log(`handleModifier called with key: ${key}, current modifier: ${modifier}, buffer:`, buffer);
-        
+
         if (modifier === "Hold") {
             const comboKeys = [...buffer, key];
             console.log(`Sending combo:`, comboKeys);
@@ -116,7 +116,6 @@ function TrackpadPage() {
     };
 
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (isComposingRef.current) return;
         const val = e.target.value;
         if (val) {
             e.target.value = '';
@@ -132,18 +131,9 @@ function TrackpadPage() {
         isComposingRef.current = true;
     };
 
-    const handleCompositionEnd = (e: React.CompositionEvent<HTMLInputElement>) => {
+    const handleCompositionEnd = (_e: React.CompositionEvent<HTMLInputElement>) => {
         isComposingRef.current = false;
-        const val = (e.target as HTMLInputElement).value;
-        if (val) {
-            // Don't send text during modifier mode
-            if (modifier !== "Release") {
-                handleModifier(val);
-            }else{
-                sendText(val);
-            }
-            (e.target as HTMLInputElement).value = '';
-        }
+        // handleInput now processes characters in real-time
     };
 
     const handleContainerClick = (e: React.MouseEvent) => {
